@@ -134,11 +134,12 @@
   // Tampilkan setiap tim dalam kartu
   teams.forEach((teamMembers, i) => {
     const teamCard = document.createElement('div');
-    teamCard.className = 'team-card col';
+    teamCard.className = 'team-card col d-flex justify-content-center align-items-center';
+    
     teamCard.innerHTML = `
-      <div class="card bg-light bg-opacity-90 shadow-lg h-100">
+    <div class="card bg-light bg-opacity-90 shadow-lg w-100" style="max-width: 400px;">
         <div class="card-body">
-          <h3 class="card-title text-primary fw-bold mb-3">Tim ${i + 1}</h3>
+          <h3 style="background-color: rgba(12, 83, 32, 0.9); padding:3px" class="card-title text-white fw-bold mb-3">Tim ${i + 1}</h3>
           <ul class="list-group list-group-flush">
             ${teamMembers.map(member => `<li class="list-group-item">${member}</li>`).join('')}
           </ul>
@@ -152,7 +153,7 @@
   actionButtons.classList.remove('d-none');
   loader.style.display = 'none';
 }
-    
+
 			startButton.addEventListener('click', () => {
 			Swal.fire({
 			 title: 'Jumlah Tim',
