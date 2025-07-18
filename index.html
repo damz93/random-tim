@@ -119,21 +119,40 @@
 			}
 			
 			function displayTeams() {
-			resultDiv.innerHTML = '';
-			const shuffledMembers = shuffleArray([...members]);
-			const teamSize = Math.ceil(shuffledMembers.length / teamCount);
-			let memberIndex = 0;
-			for (let i = 0; i < teamCount; i++) {
-			    const teamMembers = shuffledMembers.slice(memberIndex, memberIndex + teamSize);
-			    memberIndex += teamSize;
-			    const teamCard = document.createElement('div');
-			    teamCard.className = 'team-card col';
-			    teamCard.innerHTML = `<div class="card bg-light bg-opacity-90 shadow-lg h-100"><div class="card-body"><h3 class="card-title text-primary fw-bold mb-3">Tim ${i+1}</h3><ul class="list-group list-group-flush">${teamMembers.map(member=>`<li class="list-group-item">${member}</li>`).join('')}</ul></div></div>`;
-			    resultDiv.appendChild(teamCard);
-			}
-			resultDiv.classList.remove('d-none');
-			actionButtons.classList.remove('d-none');
-			loader.style.display = 'none';
+  resultDiv.innerHTML = '';
+  const shuffledMembers = shuffleArray([...members]);
+  
+  // Inisialisasi array tim kosong
+  const teams = Array.from({ length: teamCount }, () => []);
+
+  // Distribusi anggota secara round-robin
+  shuffledMembers.forEach((member, index) => {
+    const teamIndex = index % teamCount;
+    teams[teamIndex].push(member);
+  });
+
+  // Tampilkan setiap tim dalam kartu
+  teams.forEach((teamMembers, i) => {
+    const teamCard = document.createElement('div');
+    teamCard.className = 'team-card col';
+    teamCard.innerHTML = `
+      <div class="card bg-light bg-opacity-90 shadow-lg h-100">
+        <div class="card-body">
+          <h3 class="card-title text-primary fw-bold mb-3">Tim ${i + 1}</h3>
+          <ul class="list-group list-group-flush">
+            ${teamMembers.map(member => `<li class="list-group-item">${member}</li>`).join('')}
+          </ul>
+        </div>
+      </div>
+    `;
+    resultDiv.appendChild(teamCard);
+  });
+
+  resultDiv.classList.remove('d-none');
+  actionButtons.classList.remove('d-none');
+  loader.style.display = 'none';
+}
+er.style.display = 'none';
 			}
 			startButton.addEventListener('click', () => {
 			Swal.fire({
