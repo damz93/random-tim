@@ -2,303 +2,272 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-		<title>Random Team Generator</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Random Team Generator + Tournament Bracket</title>
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 		<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+				<link rel="icon" href="img/logo.png" type="image/png">
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-		<link rel="icon" href="img/logo.png" type="image/png">
 		<style>
 			body {
 			font-family: 'Poppins', sans-serif;
-			background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-			background-size: cover;
-			background-position: center;
-			height: 100vh;
-			margin: 0;
+			background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+			color: #fff;
+			min-height: 100vh;
+			padding-top: 2rem;
 			}
-			.overlay {
-			backdrop-filter: blur(8px);
-			background-color: rgba(24, 66, 3, 0.4);
-			height: 100vh;
-			width: 100vw;
-			display: flex;
-			flex-direction: column;
-			justify-content: center;
-			align-items: center;
-			padding: 1rem;
-			}
-			.loader {
-			border: 8px solid #f3f3f3;
-			border-top: 8px solid #0d6efd;
-			border-radius: 50%;
-			width: 50px;
-			height: 50px;
-			animation: spin 1s linear infinite;
-			margin: 20px auto;
-			display: none;
-			}
-			@keyframes spin {
-			0% { transform: rotate(0deg); }
-			100% { transform: rotate(360deg); }
+			textarea.form-control {
+			resize: none;
+			height: 200px;
 			}
 			.team-card {
-			transition: transform 0.3s ease-in-out;
+			background-color: rgba(255, 255, 255, 0.1);
+			border-radius: 10px;
+			padding: 1rem;
+			margin-bottom: 1rem;
 			}
-			.team-card:hover {
-			transform: scale(1.05);
+			.match-card {
+			border: 2px dashed #28a745;
+			padding: 1rem;
+			border-radius: 10px;
+			min-width: 200px;
 			}
-			.card-title {
-			font-size: 1.5rem;
+		</style>
+		<style>
+			#saweria-widget {
+			position: fixed;
+			bottom: 50px; 
+			right: 1%;
+			background: #28a745;
+			padding: 10px 15px;
+			border-radius: 30px;
+			/* box-shadow: 0 4px 12px rgba(0,0,0,0.1); */
+			z-index: 9999;
+			animation: popText 3s infinite alternate ease-in-out;
+			font-family: sans-serif;
+			font-size: 12px;
+			transition: transform 0.5s ease;
+			}
+			#saweria-widget:hover {
+			transform: scale(1.2);
+			background: rgb(54, 78, 47);
+			}
+			#saweria-widget img {
+			width: 50px;
+			height: auto;
+			}
+			@keyframes popText {
+			0% {
+			transform: scale(1);
+			text-shadow: 2px 2px 0px rgb(54, 78, 47);
+			}
+			50% {
+			transform: scale(1.07);
+			text-shadow: 4px 4px 0px rgb(54, 78, 47);
+			}
+			100% {
+			transform: scale(1);
+			text-shadow: 2px 2px 0px rgb(54, 78, 47);
+			}
 			}
 			footer {
-			background-color: rgba(12, 83, 32, 0.635);
+						background-color: rgba(12, 27, 83, 0.3);
+
 			color: #fff;
 			text-align: center;
-			padding: 12px 0;
-			position: fixed;
-			bottom: 0;
+			padding: 10px 0;
+			position: absolute;
+			font-size: 0.8rem;
+			bottom: 0px;
 			width: 100%;
+
 			}
 		</style>
 	</head>
 	<body>
+		<div id="saweria-widget">
+			<a href="https://saweria.co/damz93" target="_blank" style="text-decoration: none; color: white;">
+			
+			<span style="margin-left: 1px;font-family: poppins;">Boleh Kak Recehannya💖</span>
+			</a>
+		</div>
 		<div class="overlay">
-			<div class="container text-center">
-				<div id="startButtonContainer">
-                    <h1 class="text-white mb-5" style="font-size: 1.93rem;background-color:  rgba(12, 83, 32, 0.9); padding: 25px; border-radius: 30px;">Random Team Generator</h1>
-					<button id="startButton" class="btn btn-success btn-lg shadow" title="Mulai Buat Tim">
-					<i class="bi bi-play-fill fs-2"></i>Mulai
-					</button>
+			<div class="container">
+				<h1 class="text-center mb-4" style="border-radius: 15px; background-color: #2c5364;padding: 10px; font-weight: bold;">Random Team Generator + Tournament Bracket</h1>
+				<div class="mb-3">
+					<label for="teamCount" class="form-label">Jumlah Tim:</label>
+					<input type="number" id="teamCount" class="form-control" value="4" min="2" max="16">
 				</div>
-				<div id="loader" class="loader"></div>
-				<div id="result" class="d-none mt-4 row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
-				<div id="actionButtons" class="d-none mt-4 d-flex justify-content-center gap-3 flex-wrap">
-					<button id="printButton" class="btn btn-success px-4 py-2 fw-semibold rounded-pill" title="Ok, Cetak"><i class="bi bi-printer"></i></button>
-					<button id="reshuffleButton" class="btn btn-warning px-4 py-2 fw-semibold rounded-pill" title="Ulang Acak"><i class="bi bi-shuffle"></i></button>
-					<button id="resetButton" class="btn btn-danger px-4 py-2 fw-semibold rounded-pill" title="Input Ulang Jumlah Tim"><i class="bi bi-arrow-repeat"></i></button>
+				<div class="mb-3">
+					<label for="namesInput" class="form-label">Masukkan daftar nama anggota (1 nama per baris):</label>
+					<textarea id="namesInput" class="form-control" placeholder="..."></textarea>
+				</div>
+				<div class="row g-2 mb-4">
+					<div class="col-md-4 d-grid">
+						<button onclick="generateTeams()" class="btn btn-success" title="Mulai Buat Tim"><i class="bi bi-play-fill"></i></button>
+					</div>
+					<div class="col-md-4 d-grid">
+						<button onclick="reShuffleTeams()" class="btn btn-warning text-dark" title="Acak Ulang"><i class="bi bi-shuffle"></i></button>
+					</div>
+					<div class="col-md-4 d-grid">
+						<button onclick="resetAll()" class="btn btn-danger" title="Reset"><i class="bi bi-repeat"></i></button>
+					</div>
+				</div>
+				<div id="result" class="row gy-3"></div>
+				<div id="tournamentBracket" class="mt-5 d-none text-white" style="background-color: #0f2027;padding: 2rem; border-radius: 10px;margin-bottom: 60px;">
+					<h2 class="text-center">Bagan Turnamen</h2>
+					<div id="bracketContainer" class="d-flex flex-wrap justify-content-center gap-3 mt-3"></div>
 				</div>
 			</div>
-		</div>
-		<footer>Powered by D.A.M.Z</footer>
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" 
-			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-		<script>
-			function setBackgroundByOrientation() {
-			  const portraitImg = 'https://images.unsplash.com/photo-1549896869-ca27eeffe4fb?q=80&w=387&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';  // Potrait
-			  const landscapeImg = 'https://images.unsplash.com/photo-1474546652694-a33dd8161d66?q=80&w=884&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'; // Landscape
-			
-			  const isPortrait = window.matchMedia("(orientation: portrait)").matches;
-			
-			  document.body.style.backgroundImage = `url('${isPortrait ? portraitImg : landscapeImg}')`;
-			}
-			
-			// Jalankan saat halaman dimuat
-			window.addEventListener('load', setBackgroundByOrientation);
-			// Jalankan ulang saat orientasi berubah (misal user rotate HP)
-			window.addEventListener('resize', setBackgroundByOrientation);
-		</script>
-		<script>
-			const startButtonContainer = document.getElementById('startButtonContainer');
-			const startButton = document.getElementById('startButton');
-			const resultDiv = document.getElementById('result');
-			const actionButtons = document.getElementById('actionButtons');
-			const printButton = document.getElementById('printButton');
-			const reshuffleButton = document.getElementById('reshuffleButton');
-			const resetButton = document.getElementById('resetButton');
-			const loader = document.getElementById('loader');
-			let teamCount = 0;
-			let members = [];
-			
-			function shuffleArray(array) {
-			for (let i = array.length - 1; i > 0; i--) {
-			    const j = Math.floor(Math.random() * (i + 1));
-			    [array[i], array[j]] = [array[j], array[i]];
-			}
-			return array;
-			}
-			
-			function displayTeams() {
-  resultDiv.innerHTML = '';
-  const shuffledMembers = shuffleArray([...members]);
-  
-  // Inisialisasi array tim kosong
-  const teams = Array.from({ length: teamCount }, () => []);
+			<script>
+				function generateTeams() {
+				  const names = document.getElementById("namesInput").value.trim().split("\n").filter(n => n.trim() !== "");
+				  const teamCount = parseInt(document.getElementById("teamCount").value);
+				  if (names.length < teamCount) {
+					Swal.fire({
+						icon: 'warning',
+						title: 'Oops!',
+						text: 'Jumlah nama tidak cukup untuk membuat tim.'
+					});
+					return;
+					}
 
-  // Distribusi anggota secara round-robin
-  shuffledMembers.forEach((member, index) => {
-    const teamIndex = index % teamCount;
-    teams[teamIndex].push(member);
+				
+				  const shuffled = names.sort(() => 0.5 - Math.random());
+				  const teams = Array.from({ length: teamCount }, () => []);
+				  shuffled.forEach((name, index) => {
+				    teams[index % teamCount].push(name);
+				  });
+				
+				  displayTeams(teams);
+				  displayBracket(teams);
+				}
+				
+				function displayTeams(teams) {
+				  const resultDiv = document.getElementById("result");
+				  resultDiv.innerHTML = "";
+				  teams.forEach((team, index) => {
+				    const col = document.createElement("div");
+				    col.className = "col-md-6 col-lg-3";
+				
+				    const card = document.createElement("div");
+				    card.className = "team-card";
+				    card.innerHTML = `<h5>Tim ${index + 1}</h5><ol>${team.map(n => `<li>${n}</li>`).join('')}</ul>`;
+				
+				    col.appendChild(card);
+				    resultDiv.appendChild(col);
+				  });
+				}
+				
+				function displayBracket(teams) {
+				const bracketDiv = document.getElementById('tournamentBracket');
+				const bracketContainer = document.getElementById('bracketContainer');
+				bracketContainer.innerHTML = '';
+				
+				const teamCount = teams.length;
+				
+				if (teamCount < 4) {
+				bracketContainer.innerHTML = '<p class="text-warning">Bagan turnamen hanya bisa ditampilkan jika jumlah tim minimal 4.</p>';
+				bracketDiv.classList.remove('d-none');
+				return;
+				}
+				
+				bracketDiv.classList.remove('d-none');
+				
+				// Buat daftar nama tim
+				let teamNames = teams.map((_, i) => `Tim ${i + 1}`);
+				
+				let round = 1;
+				const rounds = [];
+				
+				while (teamNames.length > 1) {
+				const matches = [];
+				const nextRoundTeams = [];
+				
+				for (let i = 0; i < teamNames.length; i += 2) {
+				  const teamA = teamNames[i];
+				  const teamB = teamNames[i + 1];
+				
+				  if (teamB) {
+				    const matchLabel = `R${round} - Match ${Math.floor(i / 2) + 1}`;
+				    matches.push({ teamA, teamB, label: matchLabel });
+				    nextRoundTeams.push(`Pemenang ${matchLabel}`);
+				  } else {
+				    // Tim ganjil (bye)
+				    matches.push({ teamA, teamB: "BYE", label: `R${round} - Bye` });
+				    nextRoundTeams.push(teamA);
+				  }
+				}
+				
+				rounds.push(matches);
+				teamNames = nextRoundTeams;
+				round++;
+				}
+				
+				// Tampilkan setiap babak
+				rounds.forEach((matches, i) => {
+				bracketContainer.innerHTML += `<h4 class="w-100 text-center mt-4">Babak ${i + 1}</h4>`;
+				matches.forEach(m => {
+				  bracketContainer.appendChild(createMatchCard(m.teamA, m.teamB, m.label));
+				});
+				});
+				
+				// Grand Final
+				if (teamNames.length === 1) {
+				bracketContainer.innerHTML += `<h4 class="w-100 text-center mt-4">Grand Final</h4>`;
+				bracketContainer.appendChild(createMatchCard(teamNames[0], "TBD", "Final Winner"));
+				}
+				}
+				
+				
+				function createMatchCard(teamA, teamB, label) {
+				const card = document.createElement('div');
+				card.className = 'match-card';
+				card.innerHTML = `<h6>${label}</h6><p><strong>${teamA}</strong> vs <strong>${teamB}</strong></p>`;
+				return card;
+				}
+				let lastNames = [];
+
+  function reShuffleTeams() {
+   if (lastNames.length === 0) {
+  Swal.fire({
+    icon: 'info',
+    title: 'Belum Ada Tim',
+    text: 'Silakan buat tim terlebih dahulu.'
   });
-
-  // Tampilkan setiap tim dalam kartu
-  teams.forEach((teamMembers, i) => {
-    const teamCard = document.createElement('div');
-    teamCard.className = 'team-card col d-flex justify-content-center align-items-center';
-    
-    teamCard.innerHTML = `
-    <div class="card bg-light bg-opacity-90 shadow-lg w-100" style="max-width: 400px;">
-        <div class="card-body">
-          <h3 style="background-color: rgba(12, 83, 32, 0.9); padding:3px" class="card-title text-white fw-bold mb-3">Tim ${i + 1}</h3>
-          <ul class="list-group list-group-flush">
-            ${teamMembers.map(member => `<li class="list-group-item">${member}</li>`).join('')}
-          </ul>
-        </div>
-      </div>
-    `;
-    resultDiv.appendChild(teamCard);
-  });
-
-  resultDiv.classList.remove('d-none');
-  actionButtons.classList.remove('d-none');
-  loader.style.display = 'none';
+  return;
 }
 
-			startButton.addEventListener('click', () => {
-			Swal.fire({
-			 title: 'Jumlah Tim',
-			 input: 'number',
-			 inputLabel: 'Masukkan jumlah tim',
-			 inputAttributes: {
-			   min: 1,
-			   step: 1,
-			   placeholder: 'Contoh: 2',
-			   maxlength: 2
-			 },
-			 showCancelButton: true,
-			 confirmButtonText: 'Lanjut',
-			 cancelButtonText: 'Batal',
-			 allowOutsideClick: false,
-			 allowEscapeKey: false,
-			 allowEnterKey: false,
-			 inputValidator: (value) => {
-			   if (!value || value < 1) {
-			     return 'Masukkan jumlah tim yang valid!';
-			   }
-			 }
-			}).then((result) => {
-			 if (result.isConfirmed) {
-			   teamCount = parseInt(result.value);
-			   startButtonContainer.classList.add('d-none');
-			
-			   Swal.fire({
-			     title: 'Masukkan Nama Anggota',
-			     input: 'textarea',
-			     inputLabel: 'Masukkan nama anggota (satu per baris)',
-			     inputPlaceholder: 'Nama1\nNama2\nNama3\n...',
-			     inputAttributes: {
-			       maxlength: 1000
-			     },
-			     showCancelButton: true,
-			     confirmButtonText: 'Buat Tim',
-			     cancelButtonText: 'Batal',
-			     allowOutsideClick: false,
-			     allowEscapeKey: false,
-			     allowEnterKey: false,
-			     inputValidator: (value) => {
-			       if (!value.trim()) {
-			         return 'Masukkan setidaknya satu nama!';
-			       }
-			     }
-			   }).then((result) => {
-			     if (result.isConfirmed) {
-			       members = result.value
-			         .split('\n')
-			         .map(name => name.trim())
-			         .filter(name => name);
-			
-			      if (members.length < teamCount) {
-			Swal.fire({
-			 icon: 'error',
-			 title: 'Jumlah anggota tidak cukup',
-			 text: 'Jumlah anggota harus lebih banyak atau sama dengan jumlah tim!',
-			 confirmButtonText: 'Perbaiki'
-			}).then(() => {
-			 // Tampilkan kembali input nama
-			 Swal.fire({
-			   title: 'Masukkan Nama Anggota',
-			   input: 'textarea',
-			   inputLabel: 'Masukkan nama anggota (satu per baris)',
-			   inputPlaceholder: 'Nama1\nNama2\nNama3\n...',
-			   inputAttributes: {
-			     maxlength: 1000
-			   },
-			   inputValue: members.join('\n'), // isi kembali input sebelumnya
-			   showCancelButton: true,
-			   confirmButtonText: 'Buat Tim',
-			   cancelButtonText: 'Batal',
-			   allowOutsideClick: false,
-			   allowEscapeKey: false,
-			   allowEnterKey: false,
-			   inputValidator: (value) => {
-			     if (!value.trim()) {
-			       return 'Masukkan setidaknya satu nama!';
-			     }
-			   }
-			 }).then((result) => {
-			   if (result.isConfirmed) {
-			     members = result.value
-			       .split('\n')
-			       .map(name => name.trim())
-			       .filter(name => name);
-			
-			     if (members.length < teamCount) {
-			       // ✅ Rekursif: panggil diri sendiri lagi
-			       Swal.fire('Error', 'Jumlah anggota masih kurang dari jumlah tim.', 'error').then(() => {
-			         startButton.click(); // atau kamu bisa panggil fungsi tertentu jika tidak pakai button
-			       });
-			     } else {
-			       loader.style.display = 'block';
-			       setTimeout(displayTeams, 1000);
-			     }
-			   } else {
-			     startButtonContainer.classList.remove('d-none');
-			   }
-			 });
-			});
-			return;
-			}
-			
-			
-			       loader.style.display = 'block';
-			       setTimeout(displayTeams, 1000);
-			     } else if (result.isDismissed) {
-			       // ⬅️ Tampilkan kembali tombol jika user klik "Batal"
-			       startButtonContainer.classList.remove('d-none');
-			     }
-			   }).catch(() => {
-			     startButtonContainer.classList.remove('d-none');
-			   });
-			
-			 } else if (result.isDismissed) {
-			   // ⬅️ Jika batal pada jumlah tim
-			   startButtonContainer.classList.remove('d-none');
-			 }
-			}).catch(() => {
-			 startButtonContainer.classList.remove('d-none');
-			});
-			});
-			
-			printButton.addEventListener('click', () => {
-			const printWindow = window.open('', '_blank');
-			if (!printWindow) {
-			    Swal.fire('Error', 'Gagal membuka jendela cetak. Pastikan popup tidak diblokir oleh browser.', 'error');
-			    return;
-			}
-			printWindow.document.write(`<html><head><title>Daftar Tim</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"><style>body{font-family:'Poppins',sans-serif;padding:20px;background:linear-gradient(135deg,#f5f7fa 0%,#c3cfe2 100%);}.card{margin-bottom:20px;border:2px solid #0d6efd;border-radius:10px;background:rgba(255,255,255,0.9);}h1{text-align:center;color:#0d6efd;margin-bottom:30px;}.footer{text-align:center;margin-top:20px;color:#333;}</style></head><body><h1>Daftar Tim</h1><div class="container"><div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">${resultDiv.innerHTML}</div></div><p class="footer">Powered by D.A.M.Z</p></body></html>`);
-			printWindow.document.close();
-			printWindow.print();
-			});
-			reshuffleButton.addEventListener('click', () => {
-			loader.style.display = 'block';
-			setTimeout(displayTeams, 1000);
-			});
-			resetButton.addEventListener('click', () => {
-			resultDiv.classList.add('d-none');
-			actionButtons.classList.add('d-none');
-			startButtonContainer.classList.remove('d-none');
-			}); 
-		</script>
+
+    const teamCount = parseInt(document.getElementById("teamCount").value);
+    const shuffled = [...lastNames].sort(() => 0.5 - Math.random());
+    const teams = Array.from({ length: teamCount }, () => []);
+    shuffled.forEach((name, index) => {
+      teams[index % teamCount].push(name);
+    });
+
+    displayTeams(teams);
+    displayBracket(teams);
+  }
+
+  const originalGenerateTeams = generateTeams;
+  generateTeams = function() {
+    const names = document.getElementById("namesInput").value.trim().split("\n").filter(n => n.trim() !== "");
+    lastNames = names; // Simpan untuk acak ulang
+    originalGenerateTeams();
+  }
+
+  function resetAll() {
+    document.getElementById("result").innerHTML = "";
+    document.getElementById("bracketContainer").innerHTML = "";
+    document.getElementById("tournamentBracket").classList.add("d-none");
+    lastNames = [];
+  }
+				
+			</script>
+		</div>
+				<footer>Powered by D.A.M.Z</footer>
+
 	</body>
 </html>
